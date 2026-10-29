@@ -12,7 +12,7 @@ namespace Q17pD
         private List<AudioSource> _activeAudioSources = new List<AudioSource>(), _availableAudioSources = new List<AudioSource>();
         private float _tempMusicDB, _tempSFXDB;
 
-        private void Start() { _audioSourcePrefab = Resources.Load<AudioSource>("SFXAudioSource"); Revert(); }
+        private void Awake() { _audioSourcePrefab = Resources.Load<AudioSource>("SFXAudioSource"); Revert(); }
         private void Update() { for (int i = _activeAudioSources.Count - 1; i >= 0; i--) if (!_activeAudioSources[i].isPlaying) ReturnSourceToPool(_activeAudioSources[i]); }
         public AudioSource PlaySound(SoundType soundType, AudioClip clip, float volume = 1f, bool loop = false, bool fade = false, float fadeTime = 5)
         {
@@ -24,7 +24,6 @@ namespace Q17pD
             source.Play();
             if (fade) { source.DOKill(); source.volume = 0; source.DOFade(volume, fadeTime); }
             return source;
-
         }
         public void StopSound(AudioSource source, bool fade = false, float fadeTime = 5)
         {
@@ -72,13 +71,13 @@ namespace Q17pD
         {
             _tempMusicDB = Mathf.Lerp(-80, 0, value);
             if (soundType == SoundType.Music) _audioMixerGroup.audioMixer.SetFloat("MusicVolume", _tempMusicDB);
-            else _audioMixerGroup.audioMixer.SetFloat("MusicVolume", _tempMusicDB);
+            else _audioMixerGroup.audioMixer.SetFloat("SFXVolume", _tempMusicDB);
         }
         public void SetVolumeFromToggle(SoundType soundType, bool value)
         {
             _tempMusicDB = value == true ? 0 : -80;
             if (soundType == SoundType.Music) _audioMixerGroup.audioMixer.SetFloat("MusicVolume", _tempMusicDB);
-            else _audioMixerGroup.audioMixer.SetFloat("MusicVolume", _tempMusicDB);
+            else _audioMixerGroup.audioMixer.SetFloat("SFXVolume", _tempMusicDB);
         }
     }
     public enum SoundType { Music, SFX }
